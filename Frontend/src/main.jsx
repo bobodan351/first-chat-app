@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import NavBar from './components/NavBar.jsx'
+import NavBar from './components/Navbar.jsx'
 import SideBar from './components/Sidebar.jsx' // Don't forget to import this!
 import HomePage from "./pages/HomePage.jsx"
 import { createBrowserRouter, RouterProvider } from 'react-router'
