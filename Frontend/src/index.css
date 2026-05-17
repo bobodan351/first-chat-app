@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Fix: point directly to index.js to avoid the .css extension error */
+@plugin "../node_modules/daisyui/index.js" {
+	themes: all;
+}
+
+@config "../tailwind.config.js";
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
