@@ -7,7 +7,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://first-chat-app-limm.vercel.app/"],
+    origin: ["https://first-chat-app-limm.vercel.app"],
     credentials: true,
   },
 });
