@@ -6,7 +6,6 @@ import { Users } from "lucide-react";
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
-
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
@@ -14,9 +13,20 @@ const Sidebar = () => {
     getUsers();
   }, [getUsers]);
 
-  const filteredUsers = showOnlineOnly
+  // 1. Filter the users based on the toggle checkbox state
+  const baseFilteredUsers = showOnlineOnly
     ? users.filter((user) => onlineUsers.includes(user._id))
     : users;
+
+  // 2. Sort the list so that online users are always forced to the top
+  const filteredUsers = [...baseFilteredUsers].sort((a, b) => {
+    const isAOnline = onlineUsers.includes(a._id);
+    const isBOnline = onlineUsers.includes(b._id);
+
+    if (isAOnline && !isBOnline) return -1; // Move online user up
+    if (!isAOnline && isBOnline) return 1;  // Move offline user down
+    return 0;                               // Keep same position if they have identical status
+  });
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
@@ -27,7 +37,8 @@ const Sidebar = () => {
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-        {/* TODO: Online filter toggle */}
+        
+        {/* Working Online filter toggle component block */}
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -38,7 +49,9 @@ const Sidebar = () => {
             />
             <span className="text-sm">Show online only</span>
           </label>
-          <span className="text-xs text-zinc-500">({onlineUsers.length - 1} online)</span>
+          <span className="text-xs text-zinc-500">
+            ({Math.max(0, onlineUsers.length - 1)} online)
+          </span>
         </div>
       </div>
 
@@ -47,23 +60,18 @@ const Sidebar = () => {
           <button
             key={user._id}
             onClick={() => setSelectedUser(user)}
-            className={`
-              w-full p-3 flex items-center gap-3
-              hover:bg-base-300 transition-colors
-              ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}
-            `}
+            className={`w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors ${
+              selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""
+            }`}
           >
             <div className="relative mx-auto lg:mx-0">
               <img
                 src={user.profilePic || "/avatar.png"}
-                alt={user.name}
+                alt={user.fullName}
                 className="size-12 object-cover rounded-full"
               />
               {onlineUsers.includes(user._id) && (
-                <span
-                  className="absolute bottom-0 right-0 size-3 bg-green-500 
-                  rounded-full ring-2 ring-zinc-900"
-                />
+                <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
               )}
             </div>
 
@@ -78,10 +86,11 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-zinc-500 py-4">No users found</div>
         )}
       </div>
     </aside>
   );
 };
+
 export default Sidebar;
