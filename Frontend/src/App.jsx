@@ -1,7 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router";
 import "./App.css";
 import { useState, useEffect } from "react";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
