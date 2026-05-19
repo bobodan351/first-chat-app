@@ -6,49 +6,63 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Active path checking
   const isChats = location.pathname === "/";
   const isFeeds = location.pathname === "/feeds";
   const isProfile = location.pathname === "/profile";
   const isSettings = location.pathname === "/settings";
 
   return (
-    <div className="btm-nav btm-nav-md bg-zinc-950 text-zinc-400 border-t border-zinc-900 z-50 md:hidden">
-      {/* CHATS TAB */}
+    /* 
+      FIXED CONFIGURATION: 
+      - Replaced flex layout with 'grid grid-cols-4' to stop buttons from shrinking together.
+      - Increased height to h-18 (72px) for safer smartphone touch targets.
+    */
+    <div className="fixed bottom-0 left-0 right-0 h-18 bg-zinc-950 border-t border-zinc-900 grid grid-cols-4 z-50 md:hidden safe-bottom">
+      
+      {/* CHATS BUTTON */}
       <button 
-        className={isChats ? "active text-primary bg-zinc-900/40" : "hover:text-white"}
+        className={`flex flex-col items-center justify-center w-full h-full transition-all ${
+          isChats ? "text-primary bg-zinc-900/40 font-bold" : "text-zinc-400 hover:text-white"
+        }`}
         onClick={() => navigate("/")}
       >
-        <MessageSquare size={20} />
-        <span className="btm-nav-label text-[10px] font-semibold">Chats</span>
+        <MessageSquare size={22} />
+        <span className="text-[10px] mt-1 tracking-wide">Chats</span>
       </button>
 
-      {/* FEEDS TAB */}
+      {/* FEEDS BUTTON */}
       <button 
-        className={isFeeds ? "active text-primary bg-zinc-900/40" : "hover:text-white"}
+        className={`flex flex-col items-center justify-center w-full h-full transition-all ${
+          isFeeds ? "text-primary bg-zinc-900/40 font-bold" : "text-zinc-400 hover:text-white"
+        }`}
         onClick={() => navigate("/feeds")}
       >
-        <Film size={20} />
-        <span className="btm-nav-label text-[10px] font-semibold">Feeds</span>
+        <Film size={22} />
+        <span className="text-[10px] mt-1 tracking-wide">Feeds</span>
       </button>
 
-      {/* PROFILE TAB */}
+      {/* PROFILE BUTTON */}
       <button 
-        className={isProfile ? "active text-primary bg-zinc-900/40" : "hover:text-white"}
+        className={`flex flex-col items-center justify-center w-full h-full transition-all ${
+          isProfile ? "text-primary bg-zinc-900/40 font-bold" : "text-zinc-400 hover:text-white"
+        }`}
         onClick={() => navigate("/profile")}
       >
-        <User size={20} />
-        <span className="btm-nav-label text-[10px] font-semibold">Profile</span>
+        <User size={22} />
+        <span className="text-[10px] mt-1 tracking-wide">Profile</span>
       </button>
 
-      {/* SETTINGS TAB */}
+      {/* SETTINGS BUTTON */}
       <button 
-        className={isSettings ? "active text-primary bg-zinc-900/40" : "hover:text-white"}
+        className={`flex flex-col items-center justify-center w-full h-full transition-all ${
+          isSettings ? "text-primary bg-zinc-900/40 font-bold" : "text-zinc-400 hover:text-white"
+        }`}
         onClick={() => navigate("/settings")}
       >
-        <Settings size={20} />
-        <span className="btm-nav-label text-[10px] font-semibold">Settings</span>
+        <Settings size={22} />
+        <span className="text-[10px] mt-1 tracking-wide">Settings</span>
       </button>
+
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { useThemeStore } from "./store/useThemeStore";
-import BottomNav from "./components/BottomNav"; // IMPORT YOUR BOTTOM NAV
+import BottomNav from "./components/BottomNav";
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();
@@ -17,8 +17,6 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
-  console.log("User Auth:", authUser);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -43,19 +41,21 @@ function App() {
       </div>
     );
 
-  // Helper check: Hide the navigation bar if user is on auth screens
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
-    <div className="app-container min-h-screen flex flex-col pb-16 md:pb-0" data-theme={theme}>
+    <div className="app-container min-h-screen flex flex-col" data-theme={theme}>
       <NavBar />
       <Toaster />
 
-      <main className="flex-1 pt-16.5 container mx-auto px-4">
+      {/* 
+        FIXED: Added explicitly isolated 'pb-20' padding down here to the main viewport layout.
+        This forces your page text/chat lists upward so the floating navbar cannot cover them.
+      */}
+      <main className="flex-1 pt-16.5 pb-20 md:pb-0 container mx-auto px-4 overflow-x-hidden">
         <Outlet />
       </main>
 
-      {/* Renders the navigation menu for authenticated users across application panels */}
       {authUser && !isAuthPage && <BottomNav />}
     </div>
   );
