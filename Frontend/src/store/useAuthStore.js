@@ -48,8 +48,8 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      localStorage.setItem("jwt", res.data.token); // ✅ Store token
-      set({ authUser: res.data });
+  localStorage.setItem("jwt", res.data.token); // ✅ Must store token
+  set({ authUser: res.data });
       toast.success("Logged in successfully");
       get().connectSocket();
     } catch (error) {
