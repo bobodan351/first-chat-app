@@ -6,7 +6,8 @@ import NoChatSelected from "../components/NoChatSelected";
 import { useEffect } from "react";
 
 const HomePage = () => {
-  const { selectedUser } = useChatStore();
+
+    const { selectedUser, subscribeToMessages, unsubscribeFromMessages } = useChatStore();
     useEffect(() => {
     subscribeToMessages();
     return () => unsubscribeFromMessages();
