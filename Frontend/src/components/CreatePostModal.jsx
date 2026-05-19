@@ -62,7 +62,7 @@ const CreatePostModal = () => {
     <div>
       {/* TRIGGER BUTTON (Place this floating over your Feed) */}
       <button 
-        className="fixed bottom-6 left-6 btn btn-circle btn-primary shadow-xl z-50 animate-bounce"
+        className="fixed bottom-6 left-6 btn btn-circle btn-primary shadow-xl z-50 animate-bounce z-20"
         onClick={() => document.getElementById("create-post-modal").showModal()}
       >
         <span className="text-xl font-bold">+</span>
