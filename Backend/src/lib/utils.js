@@ -2,14 +2,13 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
-const S_key = process.env.JWT_SECRET;
-const secureChecker = process.env.NODE_ENV
 
-console.log(secureChecker!== "development");
+const S_key = process.env.JWT_SECRET;
+
 export const generateToken = (userId, res) => {
   const token = jwt.sign({ userId }, S_key, { expiresIn: "7d" });
   
-  // Still set cookie as fallback, but also return token
+  // Still set cookie as fallback, but main auth will be via header
   res.cookie("jwt", token, {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
@@ -18,5 +17,5 @@ export const generateToken = (userId, res) => {
     path: "/",
   });
   
-  return token;
+  return token; // Return token for localStorage
 };

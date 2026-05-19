@@ -3,14 +3,20 @@ import User from "../models/user.model.js";
 
 const protectRoute = async (req, res, next) => {
   try {
-    // Check cookie first, then Authorization header
-    const token = req.cookies.jwt || req.headers.authorization?.replace("Bearer ", "");
+    // Check Authorization header first, then cookie
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace("Bearer ", "") || req.cookies.jwt;
     
     if (!token) {
       return res.status(401).json({ message: "Unauthorized - No token provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized - Invalid token" });
+    }
+
     const user = await User.findById(decoded.userId).select("-password");
     
     if (!user) {
@@ -21,7 +27,7 @@ const protectRoute = async (req, res, next) => {
     next();
   } catch (error) {
     console.log("Error in protective middleware: ", error.message);
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized - Token verification failed" });
   }
 };
 

@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 
 const BASE_URL = import.meta.env.MODE === "development" 
   ? "http://localhost:5001" 
-  : "https://first-chat-app-n05p.onrender.com";  // ✅ Your Render backend URL
+  : "https://first-chat-app-n05p.onrender.com";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -33,43 +33,43 @@ export const useAuthStore = create((set, get) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
+      localStorage.setItem("jwt", res.data.token); // ✅ Store token
       set({ authUser: res.data });
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
-      // Added defensive fallback string text for network dropouts
       toast.error(error.response?.data?.message || "Something went wrong during signup");
     } finally {
       set({ isSigningUp: false });
     }
   },
 
-login: async (data) => {
-  set({ isLoggingIn: true });
-  try {
-    const res = await axiosInstance.post("/auth/login", data);
-    localStorage.setItem("jwt", res.data.token); // ✅ Store token
-    set({ authUser: res.data });
-    toast.success("Logged in successfully");
-    get().connectSocket();
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Invalid credentials or server offline");
-  } finally {
-    set({ isLoggingIn: false });
-  }
-},
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      localStorage.setItem("jwt", res.data.token); // ✅ Store token
+      set({ authUser: res.data });
+      toast.success("Logged in successfully");
+      get().connectSocket();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Invalid credentials or server offline");
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
 
-logout: async () => {
-  try {
-    get().disconnectSocket();
-    await axiosInstance.post("/auth/logout");
-    localStorage.removeItem("jwt"); // ✅ Remove token
-    set({ authUser: null });
-    toast.success("Logged out successfully");
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Failed to log out smoothly");
-  }
-},
+  logout: async () => {
+    try {
+      get().disconnectSocket();
+      await axiosInstance.post("/auth/logout");
+      localStorage.removeItem("jwt"); // ✅ Remove token
+      set({ authUser: null });
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to log out smoothly");
+    }
+  },
 
   updateProfile: async (data) => {
     set({ isUpdatingProfile: true });
@@ -85,29 +85,28 @@ logout: async () => {
     }
   },
 
-connectSocket: () => {
-  const { authUser } = get();
-  if (!authUser || get().socket?.connected) return;
+  connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser || get().socket?.connected) return;
 
-  const socket = io(BASE_URL, {
-    query: { userId: authUser._id },
-    withCredentials: true,  // ✅ REQUIRED for cross-domain cookies
-    transports: ["websocket", "polling"],  // ✅ Fallback for reliability
-  });
-  
-  socket.connect();
-  set({ socket: socket });
+    const socket = io(BASE_URL, {
+      query: { userId: authUser._id },
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+    });
+    
+    socket.connect();
+    set({ socket: socket });
 
-  socket.on("getOnlineUsers", (userIds) => {
-    set({ onlineUsers: userIds });
-  });
-},
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
+  },
 
   disconnectSocket: () => {
     if (get().socket?.connected) {
       get().socket.disconnect();
     }
-    // Clear out socket context representation reference safely
-    set({ socket: null }); 
+    set({ socket: null });
   },
 }));
