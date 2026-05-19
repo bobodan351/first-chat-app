@@ -60,9 +60,14 @@ const CreatePostModal = () => {
 
   return (
     <div>
-      {/* TRIGGER BUTTON (Place this floating over your Feed) */}
+      {/* 
+        FIXED TRIGGER BUTTON:
+        - Changed 'bottom-6' to 'bottom-22' on mobile so it clears the bottom nav bar.
+        - Restored 'md:bottom-6' on wider screens where the bottom nav is hidden.
+        - Set 'z-50' explicitly so it stays on top of video overlays.
+      */}
       <button 
-        className="fixed bottom-6 left-6 btn btn-circle btn-primary shadow-xl z-50 animate-bounce z-20"
+        className="fixed bottom-22 left-6 md:bottom-6 btn btn-circle btn-primary shadow-xl z-50 animate-bounce"
         onClick={() => document.getElementById("create-post-modal").showModal()}
       >
         <span className="text-xl font-bold">+</span>
