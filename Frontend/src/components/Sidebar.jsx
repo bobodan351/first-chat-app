@@ -79,8 +79,8 @@ const Sidebar = () => {
 
               {/* NEW MESSAGE BADGE INDICATOR */}
               {unreadMessages.includes(user._id) && (
-                <span className="badge badge-primary badge-sm font-bold text-white px-2.5 py-2 rounded-full animate-pulse">
-                  New
+                <span className="badge badge-primary badge-sm font-bold text-white px-2.5 py-2 rounded-full animate-pulse bg-green-900">
+                  
                 </span>
               )}
             </div>
