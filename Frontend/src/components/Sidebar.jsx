@@ -5,7 +5,8 @@ import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 
 const Sidebar = () => {
-  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
+  // Added unreadMessages to the store destructuring extractor
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, unreadMessages } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
@@ -28,7 +29,6 @@ const Sidebar = () => {
   if (isUsersLoading) return <SidebarSkeleton />;
 
   return (
-    /* FIXED: Adjusted width to span full width on mobile viewports */
     <aside className="h-full w-full border-r border-base-300 flex flex-col transition-all duration-200">
       <div className="border-b border-base-300 w-full p-5">
         <div className="flex items-center gap-2">
@@ -68,12 +68,21 @@ const Sidebar = () => {
               )}
             </div>
 
-            {/* FIXED: User text details are now persistently block rendered on mobile frames */}
-            <div className="text-left min-w-0 flex-1">
-              <div className="font-medium truncate">{user.fullName}</div>
-              <div className="text-sm text-zinc-400">
-                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
+            {/* Modified text layout wrapper to align item details horizontally */}
+            <div className="text-left min-w-0 flex-1 flex items-center justify-between">
+              <div>
+                <div className="font-medium truncate">{user.fullName}</div>
+                <div className="text-sm text-zinc-400">
+                  {onlineUsers.includes(user._id) ? "Online" : "Offline"}
+                </div>
               </div>
+
+              {/* NEW MESSAGE BADGE INDICATOR */}
+              {unreadMessages.includes(user._id) && (
+                <span className="badge badge-primary badge-sm font-bold text-white px-2.5 py-2 rounded-full animate-pulse">
+                  New
+                </span>
+              )}
             </div>
           </button>
         ))}
