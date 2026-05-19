@@ -1,41 +1,35 @@
 import { Outlet, useNavigate, useLocation } from "react-router";
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import NavBar from "./components/Navbar";
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import SettingsPage from "./pages/SettingsPage";
-import ProfilePage from "./pages/ProfilePage";
 import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-import {useThemeStore} from "./store/useThemeStore"
+import { useThemeStore } from "./store/useThemeStore";
+import BottomNav from "./components/BottomNav"; // IMPORT YOUR BOTTOM NAV
 
 function App() {
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();
-  const {theme} = useThemeStore()
+  const { theme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
   console.log("User Auth:", authUser);
-  useEffect(() => {
-  // Sets the theme directly on the root html element
-  document.documentElement.setAttribute("data-theme", theme);
-}, [theme]);
 
   useEffect(() => {
-    // If checking is finished and there is no user
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
     if (!isCheckingAuth && !authUser) {
-      // Don't redirect if they are already on login or signup pages
-      if (location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname!== "/settings") {
+      if (location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/settings") {
         navigate("/signup");
       }
-    }
-    else {
-      // If user is authenticated and tries to access login or signup, redirect to home
+    } else {
       if ((location.pathname === "/login" || location.pathname === "/signup") && authUser) {
         navigate("/");
       }
@@ -48,20 +42,21 @@ function App() {
         <Loader className="size-10 animate-spin" />
       </div>
     );
-  // Inside your App() component function
 
+  // Helper check: Hide the navigation bar if user is on auth screens
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
-    <div className="app-container" data-theme={theme}>
+    <div className="app-container min-h-screen flex flex-col pb-16 md:pb-0" data-theme={theme}>
       <NavBar />
       <Toaster />
 
-      <main className="pt-16.5 container mx-auto px-4">
-        {}
+      <main className="flex-1 pt-16.5 container mx-auto px-4">
         <Outlet />
       </main>
 
-      {/* Anything placed here (like a Footer) stays on every page */}
+      {/* Renders the navigation menu for authenticated users across application panels */}
+      {authUser && !isAuthPage && <BottomNav />}
     </div>
   );
 }
