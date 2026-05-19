@@ -19,11 +19,11 @@ const ChatContainer = () => {
   const messageEndRef = useRef(null);
 
   // Sync messaging text pipes
-  useEffect(() => {
-    getMessages(selectedUser._id);
-    subscribeToMessages();
-    return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+// Inside src/components/ChatContainer.jsx - Simplify this block:
+useEffect(() => {
+  getMessages(selectedUser._id);
+  // REMOVED duplicate subscribeToMessages() and unsubscribeFromMessages() from here!
+}, [selectedUser._id, getMessages]); 
 
   // Keep screen focused on the newest chat items
   useEffect(() => {

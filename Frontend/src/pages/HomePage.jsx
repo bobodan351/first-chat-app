@@ -6,6 +6,11 @@ import NoChatSelected from "../components/NoChatSelected";
 
 const HomePage = () => {
   const { selectedUser } = useChatStore();
+    useEffect(() => {
+    subscribeToMessages();
+    return () => unsubscribeFromMessages();
+  }, [subscribeToMessages, unsubscribeFromMessages, selectedUser]); // Re-runs cleanly when selectedUser swaps
+
 
   return (
     <div className="h-screen bg-base-200 flex items-center justify-center pt-16">
