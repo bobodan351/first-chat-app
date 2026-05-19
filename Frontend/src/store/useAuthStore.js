@@ -44,20 +44,31 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  login: async (data) => {
-    set({ isLoggingIn: true });
-    try {
-      const res = await axiosInstance.post("/auth/login", data);
-  localStorage.setItem("jwt", res.data.token); // ✅ Must store token
-  set({ authUser: res.data });
-      toast.success("Logged in successfully");
-      get().connectSocket();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid credentials or server offline");
-    } finally {
-      set({ isLoggingIn: false });
+login: async (data) => {
+  set({ isLoggingIn: true });
+  try {
+    console.log("Sending login request...");
+    const res = await axiosInstance.post("/auth/login", data);
+    console.log("Login response:", res.data);  // <-- Check this
+    console.log("Token from response:", res.data.token);  // <-- Is this defined?
+    
+    if (res.data.token) {
+      localStorage.setItem("jwt", res.data.token);
+      console.log("Token stored in localStorage:", localStorage.getItem("jwt"));
+    } else {
+      console.error("NO TOKEN IN RESPONSE!");
     }
-  },
+    
+    set({ authUser: res.data });
+    toast.success("Logged in successfully");
+    get().connectSocket();
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error(error.response?.data?.message || "Invalid credentials or server offline");
+  } finally {
+    set({ isLoggingIn: false });
+  }
+},
 
   logout: async () => {
     try {
