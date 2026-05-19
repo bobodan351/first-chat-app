@@ -44,31 +44,32 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  login: async (data) => {
-    set({ isLoggingIn: true });
-    try {
-      const res = await axiosInstance.post("/auth/login", data);
-      set({ authUser: res.data });
-      toast.success("Logged in successfully");
-      get().connectSocket();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid credentials or server offline");
-    } finally {
-      set({ isLoggingIn: false });
-    }
-  },
+login: async (data) => {
+  set({ isLoggingIn: true });
+  try {
+    const res = await axiosInstance.post("/auth/login", data);
+    localStorage.setItem("jwt", res.data.token); // ✅ Store token
+    set({ authUser: res.data });
+    toast.success("Logged in successfully");
+    get().connectSocket();
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Invalid credentials or server offline");
+  } finally {
+    set({ isLoggingIn: false });
+  }
+},
 
-  logout: async () => {
-    try {
-      // DISCONNECT FIRST: Closes real-time data pipes before losing user credentials context
-      get().disconnectSocket(); 
-      await axiosInstance.post("/auth/logout");
-      set({ authUser: null });
-      toast.success("Logged out successfully");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to log out smoothly");
-    }
-  },
+logout: async () => {
+  try {
+    get().disconnectSocket();
+    await axiosInstance.post("/auth/logout");
+    localStorage.removeItem("jwt"); // ✅ Remove token
+    set({ authUser: null });
+    toast.success("Logged out successfully");
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Failed to log out smoothly");
+  }
+},
 
   updateProfile: async (data) => {
     set({ isUpdatingProfile: true });

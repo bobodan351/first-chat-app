@@ -55,13 +55,16 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "incorrect email address"});
       // remember to add that if the password is wrong you ssay email is wrong and vice versa
     }
-    generateToken(user._id, res);
-    res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePic: user.profilePic,
-    });
+
+     const token = generateToken(user._id, res);
+  
+  res.status(200).json({
+    _id: user._id,
+    fullName: user.fullName,
+    email: user.email,
+    profilePic: user.profilePic,
+    token: token, // ✅ Return token for localStorage
+  });
   } catch (error) {
     console.log("error in the consoler", error)
     res.status(500).json({
