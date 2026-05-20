@@ -77,15 +77,29 @@ const PostItem = ({ post, currentUserId }) => {
       
       {/* BACKGROUND MEDIA PORTION */}
       <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-        {post.video ? (
-          <video src={post.video} className="w-full h-full object-cover sm:object-contain" loop autoPlay muted playsInline />
-        ) : post.image ? (
-          <img src={post.image} alt="Feed" className="w-full h-full object-cover sm:object-contain" loading="lazy" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center p-6 bg-gradient-to-b from-zinc-900 to-black text-center">
-            <p className="text-xl font-medium max-w-md text-zinc-100">{post.text}</p>
-          </div>
-        )}
+{/* REPLACE the original image tag block inside your PostItem component with this: */}
+{post.video ? (
+  <video 
+    src={post.video} 
+    className="w-full h-full object-contain bg-black" 
+    loop 
+    autoPlay 
+    muted 
+    playsInline 
+  />
+) : post.image ? (
+  <img 
+    src={post.image} 
+    alt="Feed attachment" 
+    className="w-full h-full object-contain bg-black" // FIXED: Forced object-contain to stop zooming/cropping
+    loading="lazy" 
+  />
+) : (
+  <div className="w-full h-full flex items-center justify-center p-6 bg-gradient-to-b from-zinc-900 to-black text-center">
+    <p className="text-xl font-medium max-w-md leading-relaxed text-zinc-100">{post.text}</p>
+  </div>
+)}
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none" />
       </div>
 
