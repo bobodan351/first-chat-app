@@ -12,8 +12,8 @@ export default defineConfig({
       injectRegister: 'script', // Forces browser registration
       includeAssets: ['chat.png', 'chat-512.png'],
       manifest: {
-        name: "WeChat",
-        short_name: "WeChat",
+        name: "WeChat -",
+        short_name: "WeChatPWA",
           start_url: "/",
         description: 'Instant real-time chat application',
         theme_color: '#ffffff',
