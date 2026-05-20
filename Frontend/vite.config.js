@@ -10,7 +10,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'script', // Forces browser registration
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: ['chat.png', 'chat-512.png'],
       manifest: {
         name: "WeChat",
         short_name: "WeChat",
