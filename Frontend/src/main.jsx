@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
 import SettingsPage from './pages/SettingsPage.jsx'
 import FeedContainer from './pages/FeedContainer.jsx'
+import 'virtual:pwa-register'
 
 
 const router = createBrowserRouter([
