@@ -107,6 +107,7 @@ const PostItem = ({ post, currentUserId }) => {
     src={post.video} 
     className="w-full h-full object-contain bg-black" 
     loop 
+    muted
     autoPlay 
     playsInline 
   />
