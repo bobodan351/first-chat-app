@@ -2,21 +2,25 @@ import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users } from "lucide-react";
+import { Users, Search, X } from "lucide-react"; // Added Search and X icons
 
 const Sidebar = () => {
   // Added unreadMessages to the store destructuring extractor
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, unreadMessages } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(""); // NEW: Search state
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
 
-  const baseFilteredUsers = showOnlineOnly 
-    ? users.filter((user) => onlineUsers.includes(user._id)) 
-    : users;
+  // Modified logic: First filter by online status, then by search query input string
+  const baseFilteredUsers = users.filter((user) => {
+    const matchesOnline = showOnlineOnly ? onlineUsers.includes(user._id) : true;
+    const matchesSearch = user.fullName.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesOnline && matchesSearch;
+  });
 
   const filteredUsers = [...baseFilteredUsers].sort((a, b) => {
     const isAOnline = onlineUsers.includes(a._id);
@@ -49,6 +53,28 @@ const Sidebar = () => {
           <span className="text-xs text-zinc-500">
             ({Math.max(0, onlineUsers.length - 1)} online)
           </span>
+        </div>
+
+        {/* NEW SEARCH BAR INPUT INTERFACE */}
+        <div className="mt-4 relative">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-400">
+            <Search className="size-4" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-8 py-2 bg-base-200 text-sm rounded-lg border border-base-300 focus:outline-none focus:border-primary transition-colors"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-2 flex items-center text-zinc-400 hover:text-zinc-200"
+            >
+              <X className="size-4" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -88,7 +114,9 @@ const Sidebar = () => {
         ))}
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No users found</div>
+          <div className="text-center text-zinc-500 py-8 text-sm">
+            No contacts match your search
+          </div>
         )}
       </div>
     </aside>
