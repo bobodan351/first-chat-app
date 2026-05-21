@@ -94,7 +94,7 @@ const PostItem = ({ post, currentUserId }) => {
   }
 };
 
-  };
+  
 
   return (
     <div className="h-screen w-full snap-start relative flex items-center justify-center bg-zinc-950 border-b border-zinc-900">
