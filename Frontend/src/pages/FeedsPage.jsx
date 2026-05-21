@@ -84,7 +84,6 @@ const PostItem = ({ post, currentUserId }) => {
     className="w-full h-full object-contain bg-black" 
     loop 
     autoPlay 
-    muted 
     playsInline 
   />
 ) : post.image ? (
