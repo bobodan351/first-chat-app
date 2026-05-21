@@ -55,21 +55,45 @@ const PostItem = ({ post, currentUserId }) => {
 
   // NATIVE TIKTOK SHARE SYSTEM: Copies link or fires browser system overlay tray
   const handleShareAction = async () => {
-    const shareUrl = `${window.location.origin}/posts/${post._id}`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Post by @${post.senderId?.fullName}`,
-          text: post.text || "Check out this awesome post!",
-          url: shareUrl,
-        });
-      } catch (err) { console.log("Share aborted"); }
-    } else {
-      // Fallback: Copy link text automatically if browser drops share API protocols
+  // Ensure post object exists before extracting ID
+  if (!post?._id) return;
+  
+  const shareUrl = `${window.location.origin}/posts/${post._id}`;
+  const shareData = {
+    title: `Post by @${post.senderId?.fullName || 'User'}`,
+    text: post.text || "Check out this awesome post!",
+    url: shareUrl,
+  };
+
+  // Verify API availability AND that the browser supports the payload data
+  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    try {
+      await navigator.share(shareData);
+      return; 
+    } catch (err) {
+      // Don't execute fallback if user manually cancels native menu
+      if (err.name === "AbortError") {
+        console.log("Share aborted by user");
+        return;
+      }
+      console.error("Native share failed:", err);
+    }
+  }
+
+  // Fallback Execution
+  try {
+    if (navigator.clipboard) {
       await navigator.clipboard.writeText(shareUrl);
       toast.success("Post link copied to clipboard!");
+    } else {
+      throw new Error("Clipboard API unavailable");
     }
+  } catch (clipboardErr) {
+    console.error("Fallback failed:", clipboardErr);
+    toast.error("Could not copy link automatically.");
+  }
+};
+
   };
 
   return (
