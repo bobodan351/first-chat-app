@@ -10,5 +10,9 @@ axiosInstance.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  else {
+      // Clear out old headers from previous failed attempts
+      delete config.headers.Authorization;
+  }
   return config;
 });
