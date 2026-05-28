@@ -26,7 +26,7 @@ const protectRoute = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.log("Error in protective middleware: ", error.message);
+    console.log("Error in protective middleware: ", error.message, error.status);
     return res.status(401).json({ message: "Unauthorized - Token verification failed" });
   }
 };
