@@ -29,12 +29,18 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  signup: async (data) => {
+    signup: async (data) => {
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      localStorage.setItem("jwt", res.data.token); // ✅ Store token
-      set({ authUser: res.data });
+      
+      // 1. Extract token, separate it from user profile data
+      const { token, ...userProfile } = res.data;
+      localStorage.setItem("jwt", token); 
+      
+      // 2. Set clean user profile state
+      set({ authUser: userProfile });
+      
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
@@ -44,31 +50,33 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-login: async (data) => {
-  set({ isLoggingIn: true });
-  try {
-    console.log("Sending login request...");
-    const res = await axiosInstance.post("/auth/login", data);
-    console.log("Login response:", res.data);  // <-- Check this
-    console.log("Token from response:", res.data.token);  // <-- Is this defined?
-    
-    if (res.data.token) {
-      localStorage.setItem("jwt", res.data.token);
-      console.log("Token stored in localStorage:", localStorage.getItem("jwt"));
-    } else {
-      console.error("NO TOKEN IN RESPONSE!");
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      
+      // 1. Separate the token from user fields
+      const { token, ...userProfile } = res.data;
+      
+      if (token) {
+        localStorage.setItem("jwt", token);
+      } else {
+        console.error("NO TOKEN IN RESPONSE!");
+      }
+      
+      // 2. Keep state strictly populated with user details
+      set({ authUser: userProfile });
+      
+      toast.success("Logged in successfully");
+      get().connectSocket();
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error(error.response?.data?.message || "Invalid credentials or server offline");
+    } finally {
+      set({ isLoggingIn: false });
     }
-    
-    set({ authUser: res.data });
-    toast.success("Logged in successfully");
-    get().connectSocket();
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error(error.response?.data?.message || "Invalid credentials or server offline");
-  } finally {
-    set({ isLoggingIn: false });
-  }
-},
+  },
+
 
   logout: async () => {
     try {
