@@ -7,15 +7,15 @@ import { Users, Search, X } from "lucide-react"; // Added Search and X icons
 const Sidebar = () => {
   // Added unreadMessages to the store destructuring extractor
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading, unreadMessages } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { onlineUsers,authUser } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // NEW: Search state
 
   useEffect(() => {
+    if(!authUser) return; 
     getUsers();
   }, [getUsers]);
 
-  // Modified logic: First filter by online status, then by search query input string
   const baseFilteredUsers = users.filter((user) => {
     const matchesOnline = showOnlineOnly ? onlineUsers.includes(user._id) : true;
     const matchesSearch = user.fullName.toLowerCase().includes(searchQuery.toLowerCase());
@@ -55,7 +55,7 @@ const Sidebar = () => {
           </span>
         </div>
 
-        {/* NEW SEARCH BAR INPUT INTERFACE */}
+
         <div className="mt-4 relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-400">
             <Search className="size-4" />
